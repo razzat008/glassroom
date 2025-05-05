@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -67,7 +68,8 @@ func saveToken(path string, token *oauth2.Token) {
 }
 
 func FetchClassInfo() (*classroom.ListCoursesResponse, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // cancel the request if it takes longer than 10 seconds
+	defer cancel()
 	b, err := os.ReadFile("credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read credentials file: %v", err)
