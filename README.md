@@ -14,6 +14,15 @@ go mod tidy
 ```
 
 # Usage
+> [!WARNING]
+> create a src/token.json to store:
+- groupchat id
+- api key for your telegram bot  
+and  
+- credentials.json in root of this project containing oauth credentials
+# Things to implement
+- Sending updates to telegram automatically
+- queuing updates or smth idk 
 
 # References
 - Official [quickstart](https://developers.google.com/workspace/classroom/quickstart/go) guide from [developers.google.com](https://developers.google.com/)
