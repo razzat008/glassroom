@@ -16,10 +16,18 @@ go mod tidy
 # Usage
 > [!WARNING]
 > create a src/token.json to store:
-- groupchat id
-- api key for your telegram bot  
-and  
-- credentials.json in root of this project containing oauth credentials
+> groupchat id
+> api key for your telegram bot  
+> and  
+> credentials.json in root of this project containing oauth credentials
+
+```bash
+go run src/tel_bot.go # authenticate from the displayed url
+```
+After signing in, you'll get redirected to localhost(probably)
+copy the token from the url and paste it in the terminal
+
+
 # Things to implement
 - Sending updates to telegram automatically
 - queuing updates or smth idk 
