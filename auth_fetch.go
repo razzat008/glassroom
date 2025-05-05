@@ -1,4 +1,4 @@
-package main
+package glassroom
 
 import (
 	"context"
@@ -66,7 +66,7 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func main() {
+func FetchClassInfo() (*classroom.ListCoursesResponse, error) {
 	ctx := context.Background()
 	b, err := os.ReadFile("credentials.json")
 	if err != nil {
@@ -90,11 +90,13 @@ func main() {
 		log.Fatalf("Unable to retrieve courses. %v", err)
 	}
 	if len(r.Courses) > 0 {
-		fmt.Print("Courses:\n")
-		for _, c := range r.Courses {
-			fmt.Printf("%s (%s)\n", c.Name, c.Id)
-		}
+		// fmt.Print("Courses:\n")
+		// for _, c := range r.Courses {
+		// 	fmt.Printf("%s (%s)\n", c.Name, c.Id)
+		// }
+		return r, err
 	} else {
 		fmt.Print("No courses found.")
 	}
+	return nil, err
 }
