@@ -34,8 +34,8 @@ All contributors are welcome.
 - Open a PR ; specify the changes you've made
 
 # Things to implement
-- Sending updates to telegram automatically
-- queuing updates or smth idk 
+- Sending updates to telegram automatically; some sort of listener
+- currently working on implementing commandline flags and modularity of the codebase
 
 # References
 - Official [quickstart](https://developers.google.com/workspace/classroom/quickstart/go) guide from [developers.google.com](https://developers.google.com/)
