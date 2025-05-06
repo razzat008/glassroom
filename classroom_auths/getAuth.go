@@ -1,4 +1,4 @@
-package glassroom
+package classroomauths
 
 import (
 	"context"
@@ -16,7 +16,17 @@ import (
 )
 
 // Retrieve a token, saves the token, then returns the generated client.
-func getClient(config *oauth2.Config) *http.Client {
+func GetClient() *http.Client {
+	b, err := os.ReadFile("credentials.json")
+	if err != nil {
+		log.Fatalf("Unable to read credentials file: %v", err)
+	}
+
+	// If modifying these scopes, delete your previously saved token.json.
+	config, err := google.ConfigFromJSON(b, classroom.ClassroomCourseworkMeReadonlyScope)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
+	}
 	tokFile := "token.json"
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
@@ -33,7 +43,7 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 		"authorization code: \n%v\n", authURL)
 
 	var authCode string
-	if _, err := fmt.Scan(&authCode); err != nil {
+	if _, err := fmt.Scan(&authCode); err != nil { // read the code from the stdin
 		log.Fatalf("Unable to read authorization code: %v", err)
 	}
 
@@ -67,31 +77,27 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func FetchClassInfo() (*classroom.ListCoursesResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // cancel the request if it takes longer than 10 seconds
-	defer cancel()
-	b, err := os.ReadFile("credentials.json")
+// function to send announcements
+func SendAnnouncement(srv *classroom.Service, courseId *string) (*classroom.ListAnnouncementsResponse, error) {
+	r, err := srv.Courses.Announcements.List(*courseId).PageSize(1).Do()
 	if err != nil {
-		log.Fatalf("Unable to read credentials file: %v", err)
+		log.Fatalf("Unable to send announcements: %v", err)
 	}
-
-	// If modifying these scopes, delete your previously saved token.json.
-	config, err := google.ConfigFromJSON(b, classroom.ClassroomCourseworkMeReadonlyScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
+	if len(r.Announcements) > 0 {
+		return r, err
+	} else {
+		fmt.Print("No announcements found.")
 	}
-	client := getClient(config)
+	return nil, err
+}
 
-	srv, err := classroom.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		log.Fatalf("Unable to create classroom Client %v", err)
-	}
-
+func SendCourses(srv *classroom.Service) (*classroom.ListCoursesResponse, error) {
 	r, err := srv.Courses.List().PageSize(10).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve courses. %v", err)
 	}
 	if len(r.Courses) > 0 {
+		// printout the course
 		// fmt.Print("Courses:\n")
 		// for _, c := range r.Courses {
 		// 	fmt.Printf("%s (%s)\n", c.Name, c.Id)
@@ -101,4 +107,17 @@ func FetchClassInfo() (*classroom.ListCoursesResponse, error) {
 		fmt.Print("No courses found.")
 	}
 	return nil, err
+}
+
+// a generic function to  conne
+func CreateServiceToClassroom(client *http.Client) (*classroom.Service, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // cancel the request if it takes longer than 10 seconds
+	defer cancel()
+
+	srv, err := classroom.NewService(ctx, option.WithHTTPClient(client))
+	if err != nil {
+		log.Fatalf("Unable to create classroom Client %v", err)
+		return nil, err
+	}
+	return srv, err
 }
