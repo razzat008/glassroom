@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"glassroom"
+	classroomauths "glassroom/classroom_auths"
 	"log"
 	"os"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
@@ -14,8 +14,8 @@ type Config struct {
 	ChatID int64  `json:"chat_id"`
 }
 
-func main() {
-	config, err := getConfig("src/token.json")
+func RunBot() {
+	config, err := getConfig("telegram_api_token.json")
 	if err != nil {
 		log.Fatalf("Couldn't read token from local file: %v", err)
 	}
@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("Couldn't initialize bot: %v", err)
 	}
 
-	data, err := glassroom.FetchClassInfo()
+	data, err := classroomauths.FetchClassInfo()
 	if err != nil {
 		log.Fatalf("Couldn't fetch data from Google Classroom: %v", err)
 	}
