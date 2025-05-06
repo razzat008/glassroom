@@ -27,6 +27,11 @@ go run src/tel_bot.go # authenticate from the displayed url
 After signing in, you'll get redirected to localhost(probably)
 copy the token from the url and paste it in the terminal
 
+# Contributing
+All contributors are welcome.
+- [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the repo
+- Make changes  
+- Open a PR ; specify the changes you've made
 
 # Things to implement
 - Sending updates to telegram automatically
