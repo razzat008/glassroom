@@ -91,7 +91,7 @@ func SendAnnouncement(srv *classroom.Service, courseId *string) (*classroom.List
 	return nil, err
 }
 
-func SendCourses(srv *classroom.Service) (*classroom.ListCoursesResponse, error) {
+func ListCourses(srv *classroom.Service) (*classroom.ListCoursesResponse, error) {
 	r, err := srv.Courses.List().PageSize(10).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve courses. %v", err)
