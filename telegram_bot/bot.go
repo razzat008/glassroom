@@ -1,4 +1,4 @@
-package main
+package telegrambot
 
 import (
 	"encoding/json"
@@ -25,9 +25,14 @@ func RunBot() {
 		log.Fatalf("Couldn't initialize bot: %v", err)
 	}
 
-	data, err := classroomauths.FetchClassInfo()
+	client := classroomauths.GetClient()
+	srv, err := classroomauths.CreateServiceToClassroom(client)
 	if err != nil {
-		log.Fatalf("Couldn't fetch data from Google Classroom: %v", err)
+		log.Fatalf("Couldn't create a service to classroom: %v", err)
+	}
+	data, err := classroomauths.ListCourses(srv)
+	if err != nil {
+		log.Fatalf("Couldn't fetch data: %v", err)
 	}
 
 	for _, c := range data.Courses {
