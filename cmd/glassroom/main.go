@@ -5,6 +5,7 @@ import (
 	"fmt"
 	classroomauths "glassroom/classroom_auths"
 	"log"
+	telegrambot "glassroom/telegram_bot"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 	case *bot:
 		fmt.Println("Running Telegram Bot...")
 		fmt.Printf("Connecting to chatID: %v", 6)
-		if err := telegram_bot.RunBot(); err != nil {
+		if err := telegrambot.RunBot(); err != nil {
 			log.Fatalf("Bot failed to run:")
 		}
 	}
