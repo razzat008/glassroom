@@ -2,6 +2,7 @@ package telegrambot
 
 import (
 	"encoding/json"
+	"fmt"
 	classroomauths "glassroom/classroom_auths"
 	"log"
 	"os"
@@ -14,21 +15,21 @@ type Config struct {
 	ChatID int64  `json:"chat_id"`
 }
 
-func RunBot() {
+func RunBot() error {
 	config, err := getConfig("telegram_api_token.json")
 	if err != nil {
-		log.Fatalf("Couldn't read token from local file: %v", err)
+		return fmt.Errorf("Couldn't read token from local file: %v", err)
 	}
 
 	bot, err := tgbotapi.NewBotAPI(config.APIKey) // or just `token` if not using a pointer
 	if err != nil {
-		log.Fatalf("Couldn't initialize bot: %v", err)
+		return fmt.Errorf("Couldn't initialize bot: %v", err)
 	}
 
 	client := classroomauths.GetClient()
 	srv, err := classroomauths.CreateServiceToClassroom(client)
 	if err != nil {
-		log.Fatalf("Couldn't create a service to classroom: %v", err)
+		return fmt.Errorf("Couldn't create a service to classroom: %v", err)
 	}
 	data, err := classroomauths.ListCourses(srv)
 	if err != nil {
@@ -36,11 +37,13 @@ func RunBot() {
 	}
 
 	for _, c := range data.Courses {
-		msg := tgbotapi.NewMessage(int64(config.ChatID), c.Name) // use course name or any relevant field
+		msg := tgbotapi.NewMessage(int64(config.ChatID), fmt.Sprint("Courses: %s", c.Name)) // use course name or any relevant field
 		if _, err := bot.Send(msg); err != nil {
 			log.Printf("Failed to send message: %v", err)
+			return err
 		}
 	}
+	return nil
 }
 
 func getConfig(file string) (*Config, error) {
